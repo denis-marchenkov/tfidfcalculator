@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# application files
+*.log
+*.tfidf_cache
+.vscode
+
