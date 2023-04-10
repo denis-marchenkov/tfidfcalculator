@@ -19,7 +19,7 @@ class data_cache_service():
 
         self.__init_work_folder()
 
-        logger.info("Initialized")
+        logger.info('Initialized')
         
 
     def save(self, data, file_name: str) -> str:
@@ -29,13 +29,13 @@ class data_cache_service():
         Returns full file path.
         """
 
-        logger.info("Saving data")
+        logger.info('Saving data')
 
         file_path = os.path.join(self.folder, file_name)
 
         json_result = json.dumps(data)
 
-        logger.info(f"Saving data to a file: {file_path}")
+        logger.info(f'Saving data to a file: {file_path}')
         
         with open(file_path, "w") as f:
             f.write(json_result)
@@ -48,6 +48,8 @@ class data_cache_service():
         If file is not found returns None.
         """
 
+        logger.info('Loading data')
+        
         result = None
         
         # if full file path was passed instad of name - it's fine, try load file
@@ -58,9 +60,11 @@ class data_cache_service():
              file_path = os.path.join(self.folder, file_name)
 
              if os.path.exists(file_path) == False:
+                 logger.warn(f'File path does not exist: {file_path}')
                  return result
 
-        
+        logger.info(f'Loading data from a file: {file_path}')
+
         with open(file_path, "r") as f:
             result = json.load(f)
         
@@ -68,6 +72,8 @@ class data_cache_service():
     
 
     def __init_work_folder(self):
+            
+            logger.info(f'Initializing work folder: {self.folder}')
             
             if  self.folder[-1] != '\\': 
                 self.folder += '\\'
