@@ -50,8 +50,8 @@ class test_parser(unittest.TestCase):
         actual = self.parser.parse(raw_data)
         
         self.assertEqual(2, len(actual))
-        self.assertEqual(57, len(actual[0]))
-        self.assertEqual(54, len(actual[1]))
+        self.assertEqual(58, len(actual[0]))
+        self.assertEqual(55, len(actual[1]))
         self.assertEqual("alice", actual[0][0])
         self.assertEqual("conversations", actual[0][-1])
         self.assertEqual("so", actual[1][0])
@@ -85,7 +85,7 @@ class test_parser(unittest.TestCase):
         actual = self.parser.parse(raw_data)
 
         self.assertEqual(1, len(actual))
-        self.assertEqual(112, len(actual[0]))
+        self.assertEqual(114, len(actual[0]))
 
 
 

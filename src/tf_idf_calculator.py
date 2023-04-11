@@ -17,6 +17,7 @@ class tfidf_calculator():
         
         logger.info('Initialized')
 
+
     # optional configuration with already existing cached tf-idf data
     def configure(self, **kwargs) -> None:
         """
@@ -51,7 +52,6 @@ class tfidf_calculator():
             self.tf_idf_data = tfidf
 
         logger.info(f'Calculator configured with following args: {kwargs}')
-
 
 
     # TF stands for 'Term Frequency' - represents the frequency of the word in each document.
@@ -155,6 +155,7 @@ class tfidf_calculator():
     def build_tf_idf_data(self, tf_data: dict = None, df_data: dict = None, r = 0) -> dict:
         """
         Build dictionary where key - document index, value - dictionary with key - word, value - TFIDF score of the word                                     \n
+        Rounds TF-IDF values to 'r' if r > 0                                                                                                                 \n
                                                                                                                                                              \n
         Example:                                                                                                                                             \n
         { '0' : {'the':0.01106, 'quick':0.003, 'brown':0.002}, '1' : {'fox':0.05, 'jumped':0.6, 'over':0.11}, '2': {'lazy':0.123, 'dog':0.112} ... }         \n

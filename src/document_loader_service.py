@@ -6,6 +6,7 @@ from data_cache_repository import cache_repository
 
 logger = logging.getLogger(__name__)
 
+# service layer over cache repository for loading file and parsing it's data into dictionary to pass tf_idf calculator
 class document_loader_service():
 
     def __init__(self, cache_repo: cache_repository, data_parser: parser) -> None:
@@ -16,6 +17,7 @@ class document_loader_service():
         logger.info('Initialized')
 
 
+    # load text file from disk, parse and cache parsed data
     def load_file(self, file_path: str, force_load: bool = False):
         """ 
         file_path                           - full path to a data file              \n
@@ -58,8 +60,7 @@ class document_loader_service():
         return data
 
 
-
-
+    # read file in specified encoding
     @staticmethod
     def read_file(file_path, encoding='utf-8'):
         """ Read file lines into a string. Default encoding is utf-8 """

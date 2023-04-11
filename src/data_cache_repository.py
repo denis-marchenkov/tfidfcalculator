@@ -7,6 +7,7 @@ import pathlib
 
 logger = logging.getLogger(__name__)
 
+# simple repository to save data to a file
 class cache_repository():
 
     def __init__(self) -> None:
@@ -16,6 +17,7 @@ class cache_repository():
         logger.info('Initialized')
 
 
+    # save file
     def save(self, data, file_path: str) -> str:
         """ 
         Saves 'data' as a json into file 'file_path', adds extension '.cache'.      \n
@@ -35,6 +37,7 @@ class cache_repository():
         return cache_name
 
 
+    # load file
     def load(self, file_path: str) -> str:
         """
         Loads cached object from cached file 'file_path'. Cached files have '.cache' extension.     \n
@@ -56,6 +59,7 @@ class cache_repository():
         return result
     
 
+    # check if cache file exists
     def is_cache_exists(self, file_path) -> bool:
         """ Check if cache for file 'file_path' exists on disk """
 
@@ -64,8 +68,9 @@ class cache_repository():
         return pathlib.Path(cache_name).is_file()
 
 
+    # append '.cache' extension to the original file name to get cache file name
     def get_cached_file_path(self, file_path) -> str:
-        """ Convert 'file_path' to cache file path """
+        """ Convert 'file_path' to cache file path by appending '.cache' extension """
 
         f, ext = os.path.splitext(file_path)
 

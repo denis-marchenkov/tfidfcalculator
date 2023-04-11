@@ -4,6 +4,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# text parser, prepares dictionary data for tf_idf calculator,
+# splits original text by document_separator into documents,
+# splits documents into words and forms a dictionary where key - document index, value - list of words in document
 class parser():
     
     def __init__(self) -> None:
@@ -13,6 +16,8 @@ class parser():
         logger.info('Initialized')
 
 
+    # optional config, allows to customize document separator line
+    # and list of characters to be stripped from text
     def config(self, **kwargs):
         """
         Optional.                                                                                               \n
@@ -34,6 +39,7 @@ class parser():
         logger.info(f'Parser configured with following args: {kwargs}')
 
 
+    # parse text data, strip characters, split into documents and documents into words
     def parse(self, raw_data) -> dict:
         """
         Split text file 'file_path' into documents by specified 'document_separator' separator,            \n
@@ -82,8 +88,9 @@ class parser():
 
         return documents
     
-
-    # splitting by \n may add empty entries into list   
+    
+    # removes empty entries from list of words
+    # (splitting by \n may add empty entries into list)   
     def __remove_empty_entries(self, input: list) -> None:
         
         result = input.copy()
