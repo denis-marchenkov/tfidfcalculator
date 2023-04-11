@@ -175,7 +175,7 @@ class tfidf_calculator():
             tfdata = tf_data
         
         
-        if dfdata is None:
+        if df_data is None:
             if self.df_data is None:
                 self.build_df_data(r)
             dfdata = self.df_data
