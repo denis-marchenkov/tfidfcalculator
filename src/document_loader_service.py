@@ -40,9 +40,9 @@ class document_loader_service():
             
             raw_data = document_loader_service.read_file(file_path)
             parsed_data = self.parser.parse(raw_data)
-            self.cache.save(parsed_data, file_path)
+            cache_file_path = self.cache.save(parsed_data, file_path)
 
-            data = parsed_data
+            data = self.cache.load(cache_file_path)
 
         else:
 
@@ -61,12 +61,12 @@ class document_loader_service():
 
 
     @staticmethod
-    def read_file(file_path):
-        """ Read file lines into a string """
+    def read_file(file_path, encoding='utf-8'):
+        """ Read file lines into a string. Default encoding is utf-8 """
 
         result = None
 
-        with open(file_path) as f:
+        with open(file_path, 'r', encoding=encoding) as f:
             result = f.readlines()
 
         return result

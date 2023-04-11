@@ -18,9 +18,9 @@ class cache_repository():
 
     def save(self, data, file_path: str) -> str:
         """ 
-        Saves 'data' as a json into file 'file_path' adds extension 'cache'. 
-
-        Returns full cache file path.
+        Saves 'data' as a json into file 'file_path', adds extension '.cache'.      \n
+                                                                                    \n
+        Returns full cache file path.                                               \n
         """
 
         cache_name = self.get_cached_file_path(file_path)
@@ -37,8 +37,9 @@ class cache_repository():
 
     def load(self, file_path: str) -> str:
         """
-        Loads cached object from cached file 'file_path' in work folder.
-        If file is not found returns None.
+        Loads cached object from cached file 'file_path'. Cached files have '.cache' extension.     \n
+                                                                                                    \n
+        If file is not found returns None.                                                          \n
         """
 
         cache_name = self.get_cached_file_path(file_path)

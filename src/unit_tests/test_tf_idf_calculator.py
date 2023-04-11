@@ -24,6 +24,11 @@ class test_parser(unittest.TestCase):
         
         self.assertEqual(2, len(actual))
 
+    def test_build_df_data(self):
+        
+        actual = self.calc.build_df_data()
+        
+        self.assertGreater(len(actual), 0)
 
 if __name__ == '__main__':
     unittest.main(exit=False)

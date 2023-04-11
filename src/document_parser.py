@@ -8,7 +8,7 @@ class parser():
     
     def __init__(self) -> None:
         self.document_separator = '=============='
-        self.strip_chars = ['\'','?', '!', '.', ',', ':', '"', '-', '_', ';', '*', '`', '\n', '#', "@", "$", '\\', '(', ')']
+        self.strip_chars = ['\'','?', '!', '.', ',', ':', '"', '_', ';', '*', '`', '\n', '#', "@", "$", '\\', '(', ')']
 
         logger.info('Initialized')
 
@@ -22,7 +22,6 @@ class parser():
         strip_chars                 - list of characters to remove from text                                    \n
         """
 
-        logger.info(f'Parser configured with following args: {kwargs}')
 
         ds =  kwargs.pop('document_separator', False)
         sc =  kwargs.pop('strip_chars', False)
@@ -31,6 +30,8 @@ class parser():
             self.document_separator = ds
         if sc != False:
             self.strip_chars = sc
+
+        logger.info(f'Parser configured with following args: {kwargs}')
 
 
     def parse(self, raw_data) -> dict:
