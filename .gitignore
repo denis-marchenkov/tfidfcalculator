@@ -130,6 +130,6 @@ dmypy.json
 
 # application files
 *.log
-*.tfidf_cache
 .vscode
+
 

@@ -1,70 +1,96 @@
 #region imports
 import logging
-from data_cache_service import data_cache_service
 #endregion
 
 logger = logging.getLogger(__name__)
 
 class parser():
     
-    def __init__(self, cache_service: data_cache_service) -> None:
-        self.cache = cache_service
-        self.file_path = None
+    def __init__(self) -> None:
         self.document_separator = '=============='
-        self.strip_chars = ['\'','?', '!', '.', ',', ':', '"', '-', '_', ';', '*']
+        self.strip_chars = ['\'','?', '!', '.', ',', ':', '"', '-', '_', ';', '*', '`', '\n', '#', "@", "$", '\\', '(', ')']
 
         logger.info('Initialized')
 
+
     def config(self, **kwargs):
         """
-        Configure document parser with following parameters:
-
-        file_path                   - full name of a data file to parse                                         \n
+        Optional.                                                                                               \n
+        Configure document parser with following parameters:                                                    \n
+                                                                                                                \n
         document_separator          - special marker present in text to divide it into partial documents        \n
         strip_chars                 - list of characters to remove from text                                    \n
         """
 
         logger.info(f'Parser configured with following args: {kwargs}')
-        
-        fp = kwargs.pop('file_path')
-        ds =  kwargs.pop('document_separator')
-        sc =  kwargs.pop('strip_chars')
 
-        if fp:
-            self.file_path = fp
-        if ds: 
-            self.document_separator  = ds
-        if sc:
+        ds =  kwargs.pop('document_separator', False)
+        sc =  kwargs.pop('strip_chars', False)
+
+        if ds != False:
+            self.document_separator = ds
+        if sc != False:
             self.strip_chars = sc
 
 
-    def parse(self):
+    def parse(self, raw_data) -> dict:
         """
         Split text file 'file_path' into documents by specified 'document_separator' separator,            \n
         split documents into words by whitespace,                                                          \n
-        trim characters specified in 'strip_chars'                                                         \n
-        """
-
-        logger.info(f'Parsing: {self.file_path}')
-
-        raw_data = self.read_file(self.file_path)
+        trim characters specified in 'strip_chars'.
         
+        Returns dictionary of documents where key - document index, value - list of words in document:     \n
+        { 0:['quick', 'brown'], 1:['fox', 'jumps'] }
+        """
 
-        # splitting by \n adds empty entries into list
-        if '' in raw_data:
-            raw_data = [i for i in raw_data if i!='']
+        logger.info('Parsing raw data')
 
+        data = self.__remove_empty_entries(raw_data)
+
+        documents = {}
+        doc_words = []
+        doc_count = 0
+
+        for line in data:
+
+            l = line.lower().strip('\n').strip(' ').strip('\'')
+
+            if len(self.document_separator) > 0 and l == self.document_separator:
+                
+                if len(doc_words) > 0:
+                    documents[doc_count] = doc_words
+                    doc_count += 1
+                    doc_words = []
+                
+                continue
+            
+            for c in self.strip_chars:
+                if c in l:
+                    l = l.replace(c, '')
         
+            words = l.split(' ')
 
+            words = self.__remove_empty_entries(words)
 
-    def read_file(file_path):
-        """
-        Read file into a string
-        """
+            doc_words += words
 
-        result = None
+        if len(doc_words) > 0:
+             documents[doc_count] = doc_words
 
-        with open(file_path) as f:
-            result = f.readlines()
+        logger.info(f'Data parsed: {len(documents)} documents')
 
+        return documents
+    
+
+    # splitting by \n may add empty entries into list   
+    def __remove_empty_entries(self, input: list) -> None:
+        
+        result = input.copy()
+
+        empty_lines = ['','\n']
+        if any(el in result for el in empty_lines):
+            result = [i for i in result if i not in empty_lines]
+        
         return result
+
+        

@@ -1,6 +1,8 @@
+from path_setup import path_config
+path_config.add()
+
 #region imports
 import unittest
-from unittest.mock import patch
 from document_parser import parser
 #endregion
 
@@ -23,29 +25,70 @@ close by her.                                                                   
 
 class test_parser(unittest.TestCase):
     
-    @patch('data_cache_service.data_cache_service')
-    def setUp(self, mock_cache_service) -> None:
-        self.parser = parser(mock_cache_service)
+    def setUp(self, ) -> None:
+        self.parser = parser()
+
 
     def test_parser_config(self):
-        expected_file_path = "d:\\test\\file.txt"
+
         expected_separator = "==============="
         expected_strip_chars = [',','!','^']
         
-        self.parser.config(file_path = expected_file_path, document_separator = expected_separator, strip_chars = expected_strip_chars)
+        self.parser.config(document_separator = expected_separator, strip_chars = expected_strip_chars)
 
-        actual_file_path = self.parser.file_path
         actual_separator = self.parser.document_separator
         actual_strip_chars = self.parser.strip_chars
 
-        self.assertEqual(expected_file_path, actual_file_path)
         self.assertEqual(expected_separator, actual_separator)
         self.assertListEqual(expected_strip_chars, actual_strip_chars)
 
+
     def test_parser_parse(self):
-        self.parser.read_file = lambda x: sample_text.split('\n')
-        self.parser.parse()
+
+        raw_data = sample_text.split('\n')
+
+        actual = self.parser.parse(raw_data)
+        
+        self.assertEqual(2, len(actual))
+        self.assertEqual(57, len(actual[0]))
+        self.assertEqual(54, len(actual[1]))
+        self.assertEqual("alice", actual[0][0])
+        self.assertEqual("conversations", actual[0][-1])
+        self.assertEqual("so", actual[1][0])
+        self.assertEqual("her", actual[1][-1])
+
+
+    def test_parser_strip_characters(self):
+        
+        expected = "expected"
+
+        strip = ' '.join(self.parser.strip_chars)
+        raw_data = [
+            f'{strip} {expected}',
+            self.parser.document_separator,
+            strip
+        ]
+
+        actual = self.parser.parse(raw_data)
+
+        self.assertEqual(1, len(actual))
+        self.assertEqual(1, len(actual[0]))
+        self.assertEqual(expected, actual[0][0])
+
+
+    def test_parser_no_separator(self):
+
+        self.parser.config(document_separator='')
+
+        raw_data = sample_text.split('\n')
+
+        actual = self.parser.parse(raw_data)
+
+        self.assertEqual(1, len(actual))
+        self.assertEqual(112, len(actual[0]))
+
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(exit=False)
+    path_config.remove()
