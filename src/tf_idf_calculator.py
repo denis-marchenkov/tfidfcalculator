@@ -173,8 +173,7 @@ class tfidf_calculator():
             tfdata = self.tf_data
         else:
             tfdata = tf_data
-        
-        
+
         if df_data is None:
             if self.df_data is None:
                 self.build_df_data(r)
@@ -217,9 +216,8 @@ class tfidf_calculator():
 
         return result
 
-
     # get 'top' of the most significant words for specific document
-    def get_top_words(self, document_index: int, top = 1) -> dict:
+    def get_top_words(self, document_index: int, top = 1, r = 0) -> dict:
         """
         Returns dictionary of words with highest tf-idf score for specific document     \n
                                                                                         \n
@@ -229,7 +227,7 @@ class tfidf_calculator():
 
         logger.info(f"Get top {top} most significant words for document index {document_index}")
 
-        self.build_tf_idf_data(self.tf_data, self.df_data)
+        self.build_tf_idf_data(self.tf_data, self.df_data, r)
 
         top_words = {}
 
@@ -240,7 +238,7 @@ class tfidf_calculator():
         while(i < top):
 
             tmpVal=0
-            tmpWord=0
+            tmpWord=''
 
             for word in dct:
                 if word in top_words:
@@ -249,12 +247,74 @@ class tfidf_calculator():
                     tmpVal = dct[word]
                     tmpWord = word
 
-            top_words.update({tmpWord:tmpVal})
+            if tmpVal and len(tmpWord):
+                top_words.update({tmpWord:tmpVal})
             
             i+=1
             
         return top_words
 
 
+
+    # {
+    #     'id': [0,0,0,
+    #            1,1,1],
+    #     'title': ['a', 'a', 'a', 
+    #               'b', 'b', 'b'],
+    #     'word': ['alice', 'rabbit','book',
+    #              'something','alice', 'here'],
+    #      'tfidf': [0, 0.2, 0.3,
+    #               0.02, 0.8, 0.5],
+    #      'df': [0, 0.2, 0.3,
+    #               0.02, 0.8, 0.5]
+    #      'tfidf': [0, 0.2, 0.3,
+    #               0.02, 0.8, 0.5]
+    # }
+    def flatten_data(self, document_names: list, doc_ids = [], top_w = 10, r=0):
+        logger.info(f"Flatten data into one normalized table")
+
+        if document_names is None:
+            document_names = []
+
+        self.build_tf_idf_data(self.tf_data, self.df_data, r)
+
+        has_titles = len(document_names) >= len(self.tf_idf_data)
+
+        result = {'id':[], 'title':[], 'word':[],'tf':[], 'df':[], 'tfidf':[]}
+
+
+        for document_index in self.tf_idf_data:
+            if len(doc_ids):
+                if int(document_index) not in doc_ids:
+                    continue
+            top_words = self.get_top_words(document_index, top_w, r)
+
+            for word in top_words:
+                result['id'].append(document_index)
+                if has_titles:
+                    result['title'].append(document_names[int(document_index)])
+                else:
+                    result['title'].append(f'Document {document_index}')
+                result['word'].append(word)
+                result['tf'].append(self.tf_data[document_index][word])
+                result['df'].append(self.df_data[word])
+                result['tfidf'].append(top_words[word])
+            
+            blanks_count = top_w - len(top_words)
+            
+            while blanks_count > 0:
+                result['id'].append(document_index)
+                if has_titles:
+                    result['title'].append(document_names[int(document_index)])
+                else:
+                    result['title'].append(f'Document {document_index}')
+                result['word'].append('')
+                result['tf'].append(-1)
+                result['df'].append(-1)
+                result['tfidf'].append(-1)
+                
+                blanks_count -= 1
+
+        return result
 
     

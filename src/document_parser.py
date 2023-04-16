@@ -31,8 +31,11 @@ class parser():
         ds =  kwargs.pop('document_separator', False)
         sc =  kwargs.pop('strip_chars', False)
 
-        if ds != False:
+        if ds == False:
+            logger.info(f'Using default separator: {self.document_separator}')
+        else:
             self.document_separator = ds
+            
         if sc != False:
             self.strip_chars = sc
 

@@ -25,7 +25,7 @@ def main():
 
     # full path to a text file (e.g. 'd:\\test\\text_sample.txt')
     # cache files will be created in the same folder
-    file_path = "d:\\tf_df_test\\text_sample.txt"
+    file_path = "d:\\tf_df_test\\alice_in_wonderland_full.txt"
 
     dc = cache_repository()
     dp = parser()
@@ -34,17 +34,17 @@ def main():
     #dp.config(document_separator = '[new chapter]')
     
     ld = document_loader_service(dc, dp)
-    data = ld.load_file(file_path)
+    data = ld.load_file(file_path, True)
 
     calc = tfidf_calculator(data)
 
     tf = calc.build_tf_data()
     df = calc.build_df_data()
     tfidf = calc.build_tf_idf_data(tf, df)
-
+    flatten_tfidf = calc.flatten_data(['chapter 1', 'chapter 2'], doc_ids=[3],top_w=3)
+    
     top_words = calc.get_top_words(0, 3)
 
-    print(top_words)
 
 
     logger.info('END')
