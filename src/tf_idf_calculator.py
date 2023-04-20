@@ -256,23 +256,33 @@ class tfidf_calculator():
 
 
 
-    # {
-    #     'id': [0,0,0,
-    #            1,1,1],
-    #     'title': ['a', 'a', 'a', 
-    #               'b', 'b', 'b'],
-    #     'word': ['alice', 'rabbit','book',
-    #              'something','alice', 'here'],
-    #      'tfidf': [0, 0.2, 0.3,
-    #               0.02, 0.8, 0.5],
-    #      'df': [0, 0.2, 0.3,
-    #               0.02, 0.8, 0.5]
-    #      'tfidf': [0, 0.2, 0.3,
-    #               0.02, 0.8, 0.5]
-    # }
-    def flatten_data(self, document_names: list, doc_ids = [], top_w = 10, r=0):
-        logger.info(f"Flatten data into one normalized table")
+    # flattens all TFIDF data for specific documents and selected top_w top words,
+    # suitable for datasets
+    def flatten_data(self, document_names: list = None, doc_ids = [], top_w = 10, r=0) -> dict:
+        """
+        Flattens all TFIDF data for top_w words with biggest TFIDF for documents specified in doc_ids    \n
+        Atttaches specified in document_names title to every row                                         \n
+        Returns dictionary                                                                               \n
 
+        Example:
+            {
+                'id': [0,0,0,
+                    1,1,1],
+                'title': ['a', 'a', 'a', 
+                        'b', 'b', 'b'],
+                'word': ['alice', 'rabbit','book',
+                        'something','alice', 'here'],
+                'tfidf': [0, 0.2, 0.3,
+                        0.02, 0.8, 0.5],
+                'df': [0, 0.2, 0.3,
+                        0.02, 0.8, 0.5]
+                'tfidf': [0, 0.2, 0.3,
+                        0.02, 0.8, 0.5]
+            }
+                                                                                                          \n
+        """
+
+        logger.info(f"Flatten data into one normalized table")
         if document_names is None:
             document_names = []
 

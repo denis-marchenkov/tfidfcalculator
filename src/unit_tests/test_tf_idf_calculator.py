@@ -62,7 +62,21 @@ class test_parser(unittest.TestCase):
         actual = self.calc.build_tf_idf_data(test_parser.expected_tf, test_parser.expected_df, r=3)
 
         self.assertDictEqual(test_parser.expected_tf_idf, actual)
+
+
+    def test_flatten_data(self):
+
+        self.calc.build_tf_idf_data(test_parser.expected_tf, test_parser.expected_df, r=3)
+                                    
+        actual = self.calc.flatten_data()
         
+        self.assertEqual(20, len(actual['id']))
+        self.assertEqual(20, len(actual['title']))
+        self.assertEqual(20, len(actual['word']))
+        self.assertEqual(20, len(actual['tf']))
+        self.assertEqual(20, len(actual['df']))
+        self.assertEqual(20, len(actual['tfidf']))
+
 
 
 if __name__ == '__main__':
