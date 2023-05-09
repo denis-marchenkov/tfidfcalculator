@@ -1,22 +1,21 @@
-#region imports
+# region imports
 import logging
 from math import log
-#endregion
+# endregion imports
 
 logger = logging.getLogger(__name__)
+
 
 class tfidf_calculator():
 
     def __init__(self, document_data: dict) -> None:
-        
         self.document_data = document_data
         self.total_documents = len(document_data)
         self.tf_data = None
         self.df_data = None
         self.tf_idf_data = None
-        
-        logger.info('Initialized')
 
+        logger.info('Initialized')
 
     # optional configuration with already existing cached tf-idf data
     def configure(self, **kwargs) -> None:
@@ -40,25 +39,26 @@ class tfidf_calculator():
         { '0': {'the':0.01106, 'quick':0.003, 'brown':0.002}, '1': {'fox':0.05, 'jumped':0.6, 'over':0.11}, '2': {'lazy':0.123, 'dog':0.112} ... }          \n
         """
 
-        tf =  kwargs.pop('tf', False)
-        df =  kwargs.pop('df', False)
-        tfidf =  kwargs.pop('tfidf', False)
+        tf = kwargs.pop('tf', False)
+        df = kwargs.pop('df', False)
+        tfidf = kwargs.pop('tfidf', False)
 
-        if tf != False:
+        if tf is not False:
             self.tf_data = tf
-        if df != False:
+        if df is not False:
             self.df_data = df
-        if tfidf != False:
+        if tfidf is not False:
             self.tf_idf_data = tfidf
 
         logger.info(f'Calculator configured with following args: {kwargs}')
 
-
     # TF stands for 'Term Frequency' - represents the frequency of the word in each document.
     # The number of times the word appears in the document divided by total amount of words in the document. 
-    def build_tf_data(self, r = 0) -> dict:
+    def build_tf_data(self, r=0) -> dict:
+
         """
-        Builds dictionary where key - document index, value - dictionary where key - word, value - term frequency of this word in document.     \n
+        Builds dictionary where key - document index, \n
+        value - dictionary where key - word, value - term frequency of this word in document.     \n
         Rounds TF values to 'r' if r > 0                                                                                                        \n
                                                                                                                                                 \n
         Example:                                                                                                                                \n
@@ -68,14 +68,15 @@ class tfidf_calculator():
         if self.tf_data is not None:
             logger.info('Instance was initialized with cached TF data. Returning cache.')
             return self.tf_data
-        
+
         logger.info("Begin building TF dictionary")
 
         result = {}
 
-        # self.document_data is a dictionary {'document_index': ['document_word1', 'document_word2'...], ...}
+        # self.document_data is a dictionary:
+        # {'document_index': ['document_word1', 'document_word2'...], ...}
         for document_index in self.document_data:
-            
+
             if document_index not in result:
                 result[document_index] = {}
 
@@ -89,17 +90,16 @@ class tfidf_calculator():
                 tf = round(tf, r) if r > 0 else tf
 
                 result[document_index].update({word: tf})
-        
+
         logger.info("End building TF dictionary")
 
         self.tf_data = result
-        
+
         return result
-    
 
     # DF stands for 'Document Frequency' - the proportion of documents that contain certain word.
     # The amount documents containing certain word divided by the total amount of documents.
-    def build_df_data(self, r = 0) -> dict:
+    def build_df_data(self, r=0) -> dict:
         """
         Builds dictionary where key - word, value - document frequency of the word.         \n
         Rounds DF values to 'r' if r > 0                                                    \n
@@ -107,7 +107,6 @@ class tfidf_calculator():
         Example:                                                                            \n
         { 'the':0.123, 'quick':0.05, 'brown':0.003 ... }                                    \n
         """
-        
         if self.df_data is not None:
             logger.info('Instance was initialized with cached DF data. Returning cache.')
             return self.df_data
@@ -131,7 +130,7 @@ class tfidf_calculator():
                 if word in found_words:
                     continue
 
-                # count documents which have this word       
+                # count documents which have this word
                 result[word] += 1
                 found_words.append(word)
 
@@ -148,7 +147,6 @@ class tfidf_calculator():
 
         return result
 
-
     # TF-IDF score for each word in a document.
     # IDF stands for "Inverse Document Frequency" and essentially 1/DF.
     # TF-IDF = TF * log(IDF)
@@ -160,7 +158,6 @@ class tfidf_calculator():
         Example:                                                                                                                                             \n
         { '0' : {'the':0.01106, 'quick':0.003, 'brown':0.002}, '1' : {'fox':0.05, 'jumped':0.6, 'over':0.11}, '2': {'lazy':0.123, 'dog':0.112} ... }         \n
         """
-
 
         logger.info("Begin building TFIDF score dictionary")
 
@@ -248,13 +245,11 @@ class tfidf_calculator():
                     tmpWord = word
 
             if tmpVal and len(tmpWord):
-                top_words.update({tmpWord:tmpVal})
-            
-            i+=1
-            
+                top_words.update({tmpWord: tmpVal})
+
+            i += 1
+
         return top_words
-
-
 
     # flattens all TFIDF data for specific documents and selected top_w top words,
     # suitable for datasets
@@ -309,9 +304,9 @@ class tfidf_calculator():
                 result['tf'].append(self.tf_data[document_index][word])
                 result['df'].append(self.df_data[word])
                 result['tfidf'].append(top_words[word])
-            
+
             blanks_count = top_w - len(top_words)
-            
+
             while blanks_count > 0:
                 result['id'].append(document_index)
                 if has_titles:
@@ -322,9 +317,7 @@ class tfidf_calculator():
                 result['tf'].append(-1)
                 result['df'].append(-1)
                 result['tfidf'].append(-1)
-                
+
                 blanks_count -= 1
 
         return result
-
-    
